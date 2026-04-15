@@ -228,9 +228,7 @@ export default function CreatePost() {
               <SelectItem value="food">먹거리</SelectItem>
               <SelectItem value="daily">일상용품</SelectItem>
               <SelectItem value="beauty">뷰티·패션</SelectItem>
-              <SelectItem value="electronics">전자기기</SelectItem>
               <SelectItem value="school">학용품</SelectItem>
-              <SelectItem value="freemarket">프리마켓</SelectItem>
             </SelectContent>
           </Select>
         </div>

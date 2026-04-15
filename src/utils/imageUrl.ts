@@ -31,7 +31,15 @@ export const getImageUrl = (imagePath: string | null | undefined): string => {
     }
     
     // HTTP를 HTTPS로 변환 (Mixed Content 방지)
+    // 단, IP 주소 호스트는 TLS 미지원인 경우가 많아 https 변환 시 SSL 에러가 발생할 수 있음
     if (imagePath.startsWith("http://")) {
+      try {
+        const host = new URL(imagePath).hostname;
+        const isIpHost = /^(\d{1,3}\.){3}\d{1,3}$/.test(host);
+        if (isIpHost) return imagePath;
+      } catch {
+        return imagePath;
+      }
       return imagePath.replace("http://", "https://");
     }
     return imagePath;
@@ -63,4 +71,3 @@ export const getImageUrl = (imagePath: string | null | undefined): string => {
   
   return `${apiBase}${cleanPath}`;
 };
-

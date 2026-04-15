@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "../components/ui/button";
 import { X, Eye, EyeOff, Loader2 } from "lucide-react";
 import { loginUser } from "../apis/users";
+import { getAuthErrorMessage } from "../utils/apiError";
 
 export default function Login() {
   const nav = useNavigate();
@@ -38,17 +39,9 @@ export default function Login() {
 
       // 홈으로 이동
       nav("/home");
-    } catch (err: any) {
+    } catch (err) {
       console.error("로그인 실패:", err);
-      
-      // 에러 메시지 처리
-      if (err.response?.status === 401) {
-        setError("학번 또는 비밀번호가 올바르지 않습니다.");
-      } else if (err.response?.status === 400) {
-        setError("입력 형식이 올바르지 않습니다.");
-      } else {
-        setError("로그인에 실패했습니다. 다시 시도해주세요.");
-      }
+      setError(getAuthErrorMessage(err, "login"));
     } finally {
       setIsLoading(false);
     }

@@ -8,6 +8,7 @@ import { Button } from "../components/ui/button";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { registerUser, loginUser } from "../apis/users";
 import { toast } from "sonner";
+import { getAuthErrorMessage } from "../utils/apiError";
 
 export default function Register() {
   const nav = useNavigate();
@@ -68,24 +69,9 @@ export default function Register() {
         toast.success("회원가입이 완료되었습니다! 로그인해주세요.");
         nav("/login");
       }
-    } catch (err: any) {
+    } catch (err) {
       console.error("회원가입 실패:", err);
-
-      // 에러 메시지 처리
-      if (err.response?.status === 409) {
-        const errorType = err.response?.data?.error;
-        if (errorType === "EMAIL_ALREADY_EXISTS") {
-          setError("이미 사용 중인 이메일입니다.");
-        } else if (errorType === "STUDENT_ID_ALREADY_EXISTS") {
-          setError("이미 등록된 학번입니다.");
-        } else {
-          setError("이미 존재하는 계정입니다.");
-        }
-      } else if (err.response?.status === 400) {
-        setError("입력 형식이 올바르지 않습니다.");
-      } else {
-        setError("회원가입에 실패했습니다. 다시 시도해주세요.");
-      }
+      setError(getAuthErrorMessage(err, "register"));
     } finally {
       setIsLoading(false);
     }

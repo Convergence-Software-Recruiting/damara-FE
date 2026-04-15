@@ -46,9 +46,7 @@ export default function Home() {
     { id: "food", label: "먹거리", color: "from-[#1A2F4A] to-[#355074]" },
     { id: "daily", label: "일상용품", color: "from-[#1A2F4A] to-[#355074]" },
     { id: "beauty", label: "뷰티·패션", color: "from-[#1A2F4A] to-[#355074]" },
-    { id: "electronics", label: "전자기기", color: "from-[#1A2F4A] to-[#355074]" },
     { id: "school", label: "학용품", color: "from-[#1A2F4A] to-[#355074]" },
-    { id: "freemarket", label: "프리마켓", color: "from-[#1A2F4A] to-[#355074]" },
   ];
 
   // 게시글 리스트 (API)
@@ -347,21 +345,31 @@ export default function Home() {
               )}
             </div>
           ) : (
-            filteredPosts.map((post) => (
-              <PostCard
-                key={post.id}
-                id={post.id}
-                title={post.title}
-                price={`${Math.floor(post.price ?? 0).toLocaleString()}원`}
-                image={post.images?.[0]?.imageUrl || "/placeholder.png"}
-                currentPeople={post.currentQuantity ?? 0}
-                maxPeople={post.minParticipants ?? 2}
-                location={post.pickupLocation || "명지대 캠퍼스"}
-                status={post.status || "open"}
-                onClick={() => nav(`/post/${post.id}`)}
-                isDarkMode={isDarkMode}
-              />
-            ))
+            filteredPosts.map((post) => {
+              const firstImage = post.images?.[0];
+              const image =
+                (typeof firstImage === "string" ? firstImage : undefined) ||
+                firstImage?.imageUrl ||
+                firstImage?.url ||
+                post.image ||
+                "/placeholder.png";
+
+              return (
+                <PostCard
+                  key={post.id}
+                  id={post.id}
+                  title={post.title}
+                  price={`${Math.floor(post.price ?? 0).toLocaleString()}원`}
+                  image={image}
+                  currentPeople={post.currentQuantity ?? 0}
+                  maxPeople={post.minParticipants ?? 2}
+                  location={post.pickupLocation || "명지대 캠퍼스"}
+                  status={post.status || "open"}
+                  onClick={() => nav(`/post/${post.id}`)}
+                  isDarkMode={isDarkMode}
+                />
+              );
+            })
           )}
         </div>
       )}
