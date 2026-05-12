@@ -1,3 +1,4 @@
+import { X } from "lucide-react";
 
 interface HomeMenuModalProps {
   isOpen: boolean;

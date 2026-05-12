@@ -1,140 +1,83 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
-import { getPosts } from "../../features/group-buy/api/groupBuyApi";
-import {
-  getNotifications,
-  getUnreadCount,
-  markAllAsRead,
-  markAsRead,
-} from "../../features/user/api/notificationApi";
-import { STORAGE_KEYS } from "../../shared/constants/storageKeys";
-
-import HomeHeader from "./components/HomeHeader";
+import TradeTypeSheet, { type TradeType } from "./components/TradeTypeSheet";
 import HomeBanner from "./components/HomeBanner";
 import HomeCategoryChips from "./components/HomeCategoryChips";
 import HomePopularList from "./components/HomePopularList";
 import HomeSortTabs, { type SortKey } from "./components/HomeSortTabs";
 import HomePostList from "./components/HomePostList";
-import TradeTypeSheet, { type TradeType } from "./components/TradeTypeSheet";
-import HomeMenuModal from "./components/HomeMenuModal";
-import HomeNotificationModal from "./components/HomeNotificationModal";
+
+import { ROUTES } from "../../app/router/routes";
+import { HOME_CANVAS } from "../../shared/constants/homeTheme";
+
+const DESIGN_POSTS = [
+  {
+    id: 4,
+    title: "물티슈 공동구매",
+    price: 5900,
+    currentQuantity: 1,
+    minParticipants: 3,
+    pickupLocation: "명지대 정문앞",
+    deadlineLabel: "4월 17일 (수)",
+    type: "PRE_RECRUIT",
+    status: "recruiting",
+    visualType: "plus",
+    tags: ["인기", "A형"],
+  },
+  {
+    id: 3,
+    title: "닥터유 단백질바 박스공구",
+    price: 12000,
+    currentQuantity: 2,
+    minParticipants: 5,
+    pickupLocation: "학생회관 2층",
+    deadlineLabel: "4월 18일 (목)",
+    type: "POST_PURCHASE",
+    status: "recruiting",
+    visualType: "bar",
+    tags: ["B형"],
+  },
+];
+
+const DESIGN_POPULAR_POSTS = [
+  {
+    id: 11,
+    title: "ETERNAL MARKETING",
+    price: 32,
+    currentQuantity: 0,
+    minParticipants: 2,
+    icon: "▣",
+  },
+  {
+    id: 12,
+    title: "노트 구매하실분~",
+    price: 2000,
+    currentQuantity: 1,
+    minParticipants: 4,
+    icon: "▤",
+  },
+  {
+    id: 13,
+    title: "샴푸공동구매",
+    price: 10000,
+    currentQuantity: 1,
+    minParticipants: 2,
+    icon: "▮",
+  },
+];
 
 export default function HomePage() {
   const nav = useNavigate();
-
-  const [showSearch, setShowSearch] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-
-  const [showMenuModal, setShowMenuModal] = useState(false);
-  const [showNotificationModal, setShowNotificationModal] = useState(false);
   const [showTradeTypeSheet, setShowTradeTypeSheet] = useState(false);
-
-  const [notifications, setNotifications] = useState<any[]>([]);
-  const [unreadCount, setUnreadCount] = useState(0);
-  const [notificationsLoading, setNotificationsLoading] = useState(false);
-
-  const [activeCategory, setActiveCategory] = useState("all");
+  const [activeCategory, setActiveCategory] = useState("food");
   const [sortBy, setSortBy] = useState<SortKey>("latest");
-
-  const [posts, setPosts] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const userId = localStorage.getItem(STORAGE_KEYS.USER_ID) || "";
-
-  const filteredPosts = posts.filter((post) => {
-    if (searchQuery === "") return true;
-    const q = searchQuery.toLowerCase();
-    return (
-      post.title?.toLowerCase().includes(q) ||
-      post.content?.toLowerCase().includes(q) ||
-      post.pickupLocation?.toLowerCase().includes(q)
-    );
-  });
-
-  useEffect(() => {
-    const fetchPosts = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const categoryParam =
-          activeCategory === "all" ? undefined : activeCategory;
-        const res = await getPosts(20, 0, categoryParam);
-        setPosts(res.data);
-      } catch (e) {
-        setError("게시글을 불러올 수 없습니다.");
-        console.log(e);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPosts();
-  }, [activeCategory]);
-
-  const fetchNotifications = async () => {
-    if (!userId) return;
-    setNotificationsLoading(true);
-    try {
-      const res = await getNotifications(userId);
-      setNotifications(res.data.notifications || []);
-      setUnreadCount(res.data.unreadCount || 0);
-    } catch (e) {
-      console.error("알림 조회 실패:", e);
-    } finally {
-      setNotificationsLoading(false);
-    }
-  };
-
-  const fetchUnreadCount = async () => {
-    if (!userId) return;
-    try {
-      const res = await getUnreadCount(userId);
-      setUnreadCount(res.data.unreadCount || 0);
-    } catch (e) {
-      console.error("읽지 않은 알림 개수 조회 실패:", e);
-    }
-  };
-
-  const handleMarkAllAsRead = async () => {
-    if (!userId) return;
-    try {
-      await markAllAsRead(userId);
-      fetchNotifications();
-    } catch (e) {
-      console.error("모든 알림 읽음 처리 실패:", e);
-    }
-  };
-
-  const handleMarkAsRead = async (notificationId: string) => {
-    if (!userId) return;
-    try {
-      await markAsRead(notificationId, userId);
-      fetchNotifications();
-    } catch (e) {
-      console.error("알림 읽음 처리 실패:", e);
-    }
-  };
-
-  useEffect(() => {
-    fetchUnreadCount();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    if (showNotificationModal) {
-      fetchNotifications();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showNotificationModal]);
 
   useEffect(() => {
     const handleOpenSheet = () => setShowTradeTypeSheet(true);
     window.addEventListener("openTradeTypeSheet", handleOpenSheet);
-    return () => {
-      window.removeEventListener("openTradeTypeSheet", handleOpenSheet);
-    };
+    return () => window.removeEventListener("openTradeTypeSheet", handleOpenSheet);
   }, []);
 
   const handleSelectTradeType = (type: TradeType) => {
@@ -142,21 +85,51 @@ export default function HomePage() {
     nav(`/create?type=${type}`);
   };
 
-  const handleLogout = () => {
-    if (!confirm("로그아웃 하시겠습니까?")) return;
-    localStorage.removeItem(STORAGE_KEYS.USER);
-    localStorage.removeItem(STORAGE_KEYS.USER_ID);
-    nav("/login");
-  };
-
   return (
-    <div data-page="홈">
-      <p>홈</p>
+    <div
+      data-page="홈"
+      style={{
+        width: "100%",
+        minHeight: "100dvh",
+        overflowX: "hidden",
+        backgroundColor: HOME_CANVAS,
+      }}
+    >
+      <main style={{ width: "100%", overflowX: "hidden", backgroundColor: HOME_CANVAS }}>
+        <div style={{ padding: "12px 16px 0" }}>
+          <HomeBanner />
+        </div>
 
-      <TradeTypeSheet isOpen={showTradeTypeSheet} onClose={()=>setShowTradeTypeSheet(false)} onSelect={handleSelectTradeType} />
-      <HomeMenuModal isOpen={showMenuModal} onClose={()=>setShowMenuModal(false)} onProfile={()=>{setShowMenuModal(false);nav("/profile");}} onSettings={()=>{setShowMenuModal(false);nav("/settings");}} onFaq={()=>{setShowMenuModal(false);nav("/faq");}} onLogout={()=>{setShowMenuModal(false);handleLogout();}} />
-      <HomeNotificationModal isOpen={showNotificationModal} onClose={()=>setShowNotificationModal(false)} notifications={notifications} unreadCount={unreadCount} loading={notificationsLoading} onRead={handleMarkAsRead} onReadAll={handleMarkAllAsRead} />
-      <button type="button" onClick={()=>setShowTradeTypeSheet(true)} aria-label="공구 등록" />
+        <div style={{ paddingTop: 4 }}>
+          <HomeCategoryChips activeCategory={activeCategory} onChange={setActiveCategory} />
+        </div>
+
+        <HomePopularList
+          posts={DESIGN_POPULAR_POSTS}
+          onItemClick={(id) => nav(ROUTES.GROUP_BUY_DETAIL.replace(":id", String(id)))}
+        />
+
+        <div style={{ marginTop: 12, backgroundColor: HOME_CANVAS }}>
+          <HomeSortTabs
+            sortBy={sortBy}
+            totalCount={4}
+            onChange={setSortBy}
+            onFilterClick={() => toast.message("필터는 곧 연결됩니다.")}
+          />
+        </div>
+
+        <HomePostList
+          posts={DESIGN_POSTS}
+          sortBy={sortBy}
+          onItemClick={(id) => nav(ROUTES.GROUP_BUY_DETAIL.replace(":id", String(id)))}
+        />
+      </main>
+
+      <TradeTypeSheet
+        isOpen={showTradeTypeSheet}
+        onClose={() => setShowTradeTypeSheet(false)}
+        onSelect={handleSelectTradeType}
+      />
     </div>
   );
 }

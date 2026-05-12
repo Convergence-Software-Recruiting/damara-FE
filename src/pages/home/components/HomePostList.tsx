@@ -37,6 +37,16 @@ function sortPosts(posts: any[], sortBy?: SortKey): any[] {
   return arr;
 }
 
+function mapStatus(raw: string | undefined): "open" | "closed" | "in_progress" | "completed" | "recruiting" {
+  if (!raw) return "open";
+  const recruiting = ["open", "recruiting", "RECRUITING", "AVAILABLE"];
+  if (recruiting.includes(raw)) return "recruiting";
+  if (raw === "closed" || raw === "RECRUIT_FULL" || raw === "SOLD_OUT") return "closed";
+  if (raw === "completed" || raw === "COMPLETED") return "completed";
+  if (raw === "in_progress" || raw === "PURCHASING" || raw === "DISTRIBUTING") return "in_progress";
+  return "open";
+}
+
 export default function HomePostList({
   posts,
   sortBy,
@@ -46,25 +56,32 @@ export default function HomePostList({
   const sorted = sortPosts(posts, sortBy);
 
   if (sorted.length === 0) {
-    return <div data-empty>{emptyText}</div>;
+    return (
+      <div className="px-4 py-16 text-center text-[14px] text-[#9ca3af]" data-empty>
+        {emptyText}
+      </div>
+    );
   }
 
   return (
-    <ul>
+    <ul className="flex flex-col">
       {sorted.map((post) => (
         <li key={post.id}>
           <GroupBuyCard
-            id={post.id}
+            id={Number(post.id)}
             title={post.title}
             price={`${Math.floor(post.price ?? 0).toLocaleString()}원`}
             image={getFirstImage(post)}
             currentPeople={post.currentQuantity ?? 0}
             maxPeople={post.minParticipants ?? 2}
             location={post.pickupLocation || "명지대 캠퍼스"}
-            status={post.status || "open"}
+            status={mapStatus(post.status)}
             onClick={() => onItemClick(post.id)}
             groupBuyType={post.type ?? null}
             deadline={post.deadline ?? null}
+            deadlineLabel={post.deadlineLabel ?? null}
+            visualType={post.visualType ?? "default"}
+            tags={post.tags}
             remainingQuantity={post.remainingQuantity ?? null}
             isReceiptVerified={post.isReceiptVerified ?? null}
           />

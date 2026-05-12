@@ -1,3 +1,4 @@
+import { X } from "lucide-react";
 
 interface NotificationItem {
   id: string;

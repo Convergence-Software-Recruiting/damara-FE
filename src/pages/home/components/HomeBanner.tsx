@@ -1,13 +1,21 @@
-import banner1 from "../../../assets/banner_1 1.png";
+import bannerImage from "../../../assets/banner_1 1.png";
 
 export default function HomeBanner() {
   return (
-    <div>
+    <section aria-label="캠퍼스 공동구매 안내">
       <img
-        src={banner1}
-        alt="필요한 건 함께 사면 더 이득! 명지대 캠퍼스 공동구매"
+        src={bannerImage}
+        alt="필요할 때, 함께 사면 더 이득! 명지대 캠퍼스 공동구매"
         decoding="async"
+        style={{
+          display: "block",
+          width: "100%",
+          height: 153,
+          borderRadius: 16,
+          objectFit: "cover",
+          objectPosition: "center",
+        }}
       />
-    </div>
+    </section>
   );
 }

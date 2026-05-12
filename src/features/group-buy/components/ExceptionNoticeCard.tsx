@@ -1,10 +1,10 @@
+import React from "react";
+import { AlertTriangle, Package, PackageX, TrendingUp } from "lucide-react";
 import { EnhancedPostFields } from "../utils/enhancedPostMapper";
 import { ExceptionStatus } from "../../../types/groupBuy";
 
 interface ExceptionNoticeCardProps {
   data: EnhancedPostFields;
-  /** @deprecated 다크모드 제거됨 */
-  isDarkMode?: boolean;
 }
 
 export default function ExceptionNoticeCard({ data }: ExceptionNoticeCardProps) {

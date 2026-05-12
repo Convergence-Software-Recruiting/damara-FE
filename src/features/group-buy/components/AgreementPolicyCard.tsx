@@ -1,10 +1,8 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { EnhancedPostFields } from "../utils/enhancedPostMapper";
 
 interface AgreementPolicyCardProps {
   data: EnhancedPostFields;
-  /** @deprecated 다크모드 제거됨 */
-  isDarkMode?: boolean;
   defaultOpen?: boolean;
 }
 

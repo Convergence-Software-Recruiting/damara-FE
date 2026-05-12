@@ -8,8 +8,6 @@ interface ParticipationConfirmModalProps {
   onClose: () => void;
   data: EnhancedPostFields;
   postTitle?: string;
-  /** @deprecated 다크모드 제거됨 */
-  isDarkMode?: boolean;
   isLoading?: boolean;
 }
 

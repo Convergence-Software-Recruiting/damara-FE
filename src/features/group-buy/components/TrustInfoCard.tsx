@@ -4,8 +4,6 @@ import { VerificationBadge, TrustBadge } from "./TrustBadges";
 
 interface TrustInfoCardProps {
   data: EnhancedPostFields;
-  /** @deprecated 다크모드 제거됨 */
-  isDarkMode?: boolean;
   title?: string;
 }
 

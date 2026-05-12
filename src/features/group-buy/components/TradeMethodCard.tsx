@@ -1,11 +1,11 @@
+import React from "react";
+import { Gift } from "lucide-react";
 import { EnhancedPostFields } from "../utils/enhancedPostMapper";
 import { TradeMethodBadge } from "./TrustBadges";
 import { TRADE_METHOD_DESC } from "../../../types/groupBuy";
 
 interface TradeMethodCardProps {
   data: EnhancedPostFields;
-  /** @deprecated 다크모드 제거됨 */
-  isDarkMode?: boolean;
 }
 
 export default function TradeMethodCard({ data }: TradeMethodCardProps) {

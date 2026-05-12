@@ -31,6 +31,7 @@ import AgreementPolicyCard from "../../features/group-buy/components/AgreementPo
 import ExceptionNoticeCard from "../../features/group-buy/components/ExceptionNoticeCard";
 import ParticipationConfirmModal from "../../features/group-buy/components/ParticipationConfirmModal";
 import { getEnhancedData } from "../../features/group-buy/utils/enhancedPostMapper";
+import { readFavoriteFlag } from "../../features/group-buy/utils/favoriteResponse";
 import { STORAGE_KEYS } from "../../shared/constants/storageKeys";
 
 const STATUS_LIST = [
@@ -111,7 +112,7 @@ export default function GroupBuyDetailPage() {
       if (!id || !currentUserId) return;
       try {
         const res = await checkFavorite(id, currentUserId);
-        setIsFavorite(res.data.isFavorite);
+        setIsFavorite(readFavoriteFlag(res.data));
       } catch (err) {
         console.error(err);
       }
@@ -274,6 +275,8 @@ export default function GroupBuyDetailPage() {
       }
     } catch (err: any) {
       console.error("관심 등록/해제 실패:", err);
+      setIsFavorite(!newFavoriteState);
+      toast.error("찜 처리에 실패했습니다.");
     } finally {
       setFavoriteLoading(false);
     }

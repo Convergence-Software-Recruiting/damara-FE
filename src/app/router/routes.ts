@@ -1,3 +1,11 @@
+/** 라우터·탭에서 pathname 비교용(끝 슬래시 등 정규화) */
+export function normalizeAppPath(pathname: string): string {
+  if (pathname.length > 1 && pathname.endsWith("/")) {
+    return pathname.replace(/\/+$/, "");
+  }
+  return pathname || "/";
+}
+
 export const ROUTES = {
   SPLASH: "/",
   LOGIN: "/login",
@@ -16,6 +24,12 @@ export const ROUTES = {
   CATEGORY: "/category",
 } as const;
 
+/** 상단 앱 헤더를 쓰는 경로 (채팅/카테고리는 각 페이지 전용 헤더 사용) */
+export const SHOW_APP_CHROME_PATHS: string[] = [
+  ROUTES.HOME,
+];
+
+/** 하단 탭 경로 */
 export const SHOW_BOTTOM_NAV_PATHS: string[] = [
   ROUTES.HOME,
   ROUTES.CATEGORY,

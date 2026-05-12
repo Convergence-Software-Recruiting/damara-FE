@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import React, { type ReactNode } from "react";
 
 interface MobileLayoutProps {
   children: ReactNode;
@@ -8,7 +8,9 @@ interface MobileLayoutProps {
 export default function MobileLayout({ children, className }: MobileLayoutProps) {
   return (
     <div className="w-full min-h-screen flex justify-center">
-      <div className={`w-full max-w-[430px] min-h-screen ${className ?? ""}`}>
+      <div
+        className={`w-full max-w-[430px] min-h-dvh min-h-screen bg-transparent ${className ?? ""}`}
+      >
         {children}
       </div>
     </div>

@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { TradeMethod, GroupBuyType } from "../../types/groupBuy";
+import { useNavigate } from "react-router-dom";
 import { uploadImage } from "../../shared/api/uploadApi";
 import { createPost } from "../../features/group-buy/api/groupBuyApi";
 import { getImageUrl } from "../../shared/utils/imageUrl";
@@ -9,12 +8,6 @@ import { STORAGE_KEYS } from "../../shared/constants/storageKeys";
 
 export default function GroupBuyCreatePage() {
   const nav = useNavigate();
-  const [searchParams] = useSearchParams();
-
-  const groupBuyType =
-    (searchParams.get("type") as GroupBuyType | null) ?? null;
-  const isPreRecruit = groupBuyType === "PRE_RECRUIT";
-  const isPostPurchase = groupBuyType === "POST_PURCHASE";
 
   const [images, setImages] = useState<{ preview: string; url: string }[]>([]);
   const [title, setTitle] = useState("");
@@ -26,19 +19,6 @@ export default function GroupBuyCreatePage() {
   const [description, setDescription] = useState("");
 
   const [loading, setLoading] = useState(false);
-
-  const [selectedTradeMethod, setSelectedTradeMethod] = useState<TradeMethod | "">("");
-  const [selectedDamaraZone, setSelectedDamaraZone] = useState("");
-  const [showDamaraZone, setShowDamaraZone] = useState(false);
-
-  const [showAgreementSection, setShowAgreementSection] = useState(false);
-  const [agreementCancel, setAgreementCancel] = useState("");
-  const [agreementNoShow] = useState("약속 시간 15분 이상 미응답 시 노쇼 처리");
-  const [agreementPriceChange, setAgreementPriceChange] = useState("");
-  const [agreementOutOfStock, setAgreementOutOfStock] = useState("");
-  const [agreementDamage, setAgreementDamage] = useState("");
-
-  const [deliveryIncentive, setDeliveryIncentive] = useState("");
 
   const handleSelectFile = async (
     e: React.ChangeEvent<HTMLInputElement>
@@ -71,11 +51,6 @@ export default function GroupBuyCreatePage() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const removeImage = (index: number) => {
-    URL.revokeObjectURL(images[index].preview);
-    setImages((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async (e?: React.FormEvent) => {
