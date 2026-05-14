@@ -1,10 +1,18 @@
-import { HOME_BORDER, HOME_CONTROL_TEXT, HOME_SURFACE } from "../../../shared/constants/homeTheme";
+import {
+  blue50,
+  BRAND_PRIMARY,
+  HOME_BORDER,
+  TEXT_META,
+} from "../../../shared/constants/homeTheme";
+import { UI_IX_BUTTON, UI_IX_HOVER_GREY50, UI_PAGE_PAD_X, UI_R_BADGE } from "../../../shared/constants/damaraUISystem";
 
-import { HOME_CATEGORIES } from "../constants/homeCategoryChipsData";
+import { HOME_CATEGORIES, type HomeCategoryId } from "../constants/homeCategoryChipsData";
+
+const C_CHIP_BORDER = HOME_BORDER;
 
 interface HomeCategoryChipsProps {
-  activeCategory: string;
-  onChange: (id: string) => void;
+  activeCategory: HomeCategoryId;
+  onChange: (id: HomeCategoryId) => void;
 }
 
 export default function HomeCategoryChips({
@@ -17,14 +25,13 @@ export default function HomeCategoryChips({
       aria-label="홈 카테고리 필터"
       className="no-scrollbar flex items-center overflow-x-auto"
       style={{
-        gap: 5,
-        padding: "4px 8px 4px 14px",
+        gap: 7,
+        padding: `10px ${UI_PAGE_PAD_X}px 12px`,
         scrollbarWidth: "none",
       }}
     >
       {HOME_CATEGORIES.map((cat) => {
         const isActive = activeCategory === cat.id;
-        const isAll = cat.id === "all";
         return (
           <button
             key={cat.id}
@@ -32,28 +39,24 @@ export default function HomeCategoryChips({
             role="tab"
             aria-selected={isActive}
             onClick={() => onChange(cat.id)}
-            className="flex items-center"
+            className={isActive ? UI_IX_BUTTON : `${UI_IX_BUTTON} ${UI_IX_HOVER_GREY50} bg-white`}
             style={{
               flexShrink: 0,
-              gap: 4,
-              height: isActive ? 28 : 30,
-              padding: isAll ? "5px 11px" : "5px 10px",
-              borderRadius: 999,
-              border: isActive ? "1px solid transparent" : `1px solid ${HOME_BORDER}`,
-              backgroundColor: isActive ? "#3d5cff" : HOME_SURFACE,
-              color: isActive ? "#ffffff" : HOME_CONTROL_TEXT,
-              fontSize: 11,
-              lineHeight: "16px",
-              fontWeight: isActive ? 700 : 500,
+              height: 32,
+              padding: "0 13px",
+              borderRadius: UI_R_BADGE,
+              border: isActive ? `1px solid ${blue50}` : `1px solid ${C_CHIP_BORDER}`,
+              background: isActive ? blue50 : "#ffffff",
+              color: isActive ? BRAND_PRIMARY : TEXT_META,
+              fontSize: 12.5,
+              lineHeight: "32px",
+              fontWeight: isActive ? 800 : 600,
               whiteSpace: "nowrap",
-              boxShadow: isActive ? "0 2px 4px rgba(61,92,255,0.28)" : "none",
+              boxShadow: "none",
+              cursor: "pointer",
+              transition: "all 0.18s ease",
             }}
           >
-            {!isAll && cat.emoji ? (
-              <span style={{ fontSize: 9, lineHeight: 1 }} aria-hidden>
-                {cat.emoji}
-              </span>
-            ) : null}
             {cat.label}
           </button>
         );

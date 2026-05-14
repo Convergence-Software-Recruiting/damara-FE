@@ -1,8 +1,9 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL: "/api",
   withCredentials: true,
+  timeout: 15000,
 });
 
   // 요청 인터셉터

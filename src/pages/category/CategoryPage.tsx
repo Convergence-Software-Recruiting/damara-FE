@@ -5,18 +5,36 @@ import { toast } from "sonner";
 
 import { ROUTES } from "../../app/router/routes";
 import FavoriteHeartButton from "../../features/group-buy/components/FavoriteHeartButton";
+import EmptyState from "../../shared/components/damara/EmptyState";
+import {
+  BADGE_INFO_BG,
+  BADGE_INFO_TEXT,
+  BADGE_URGENT_BG,
+  BADGE_URGENT_TEXT,
+  blue50,
+  BRAND_PRIMARY,
+  green50,
+  HOME_BORDER,
+  HOME_CANVAS,
+  purple50,
+  SCRIM_LIGHT,
+  TEXT_META,
+  yellow50,
+  grey500,
+  grey900,
+} from "../../shared/constants/homeTheme";
+import {
+  UI_BADGE_FS,
+  UI_BADGE_FW,
+  UI_PAGE_PAD_X,
+  UI_R_BADGE,
+  UI_IX_BUTTON,
+  UI_IX_HOVER_GREY50,
+} from "../../shared/constants/damaraUISystem";
 
-/** Figma 노드 81:278 기준 */
-const C_HEADER_BORDER = "#f3f4f6";
-const C_SEARCH_BG = "#f5f6f8";
-const C_PRIMARY = "#4358e8";
-const C_CHIP_IDLE_BG = "#f8f9fa";
-const C_CHIP_BORDER = "#eaecf0";
-const C_CARD_BORDER = "#f1f3f5";
-const C_TITLE = "#111827";
-const C_META = "#888888";
-const C_BADGE_GREEN = "#4eaa64";
-const C_BADGE_RED = "#fa5252";
+/** 홈과 동일 토큰 + 포인트 컬러 */
+const C_SEARCH_BG = "#ffffff";
+const C_CHIP_BORDER = HOME_BORDER;
 
 type FilterId = "all" | "food" | "daily" | "beauty" | "stationery";
 
@@ -54,7 +72,7 @@ const PRODUCTS: ProductRow[] = [
     current: 12,
     max: 20,
     categories: ["all", "food"],
-    thumbBg: "#fff4d2",
+    thumbBg: yellow50,
     badge: "recruiting",
   },
   {
@@ -64,7 +82,7 @@ const PRODUCTS: ProductRow[] = [
     current: 18,
     max: 30,
     categories: ["all", "daily"],
-    thumbBg: "#e8f1f9",
+    thumbBg: blue50,
     badge: "recruiting",
   },
   {
@@ -74,7 +92,7 @@ const PRODUCTS: ProductRow[] = [
     current: 15,
     max: 25,
     categories: ["all", "beauty", "daily"],
-    thumbBg: "#f9ebef",
+    thumbBg: purple50,
     badge: "recruiting",
   },
   {
@@ -84,7 +102,7 @@ const PRODUCTS: ProductRow[] = [
     current: 9,
     max: 20,
     categories: ["all", "stationery"],
-    thumbBg: "#fdf7e5",
+    thumbBg: yellow50,
     badge: "recruiting",
   },
   {
@@ -94,7 +112,7 @@ const PRODUCTS: ProductRow[] = [
     current: 22,
     max: 25,
     categories: ["all", "beauty"],
-    thumbBg: "#f9ebef",
+    thumbBg: purple50,
     badge: "closing",
   },
   {
@@ -104,7 +122,7 @@ const PRODUCTS: ProductRow[] = [
     current: 5,
     max: 15,
     categories: ["all", "food"],
-    thumbBg: "#e8f9ee",
+    thumbBg: green50,
     badge: "recruiting",
   },
 ];
@@ -142,7 +160,7 @@ export default function CategoryPage() {
       style={{
         minHeight: "100dvh",
         width: "100%",
-        backgroundColor: "#ffffff",
+        backgroundColor: HOME_CANVAS,
         display: "flex",
         flexDirection: "column",
         overflowX: "hidden",
@@ -154,19 +172,21 @@ export default function CategoryPage() {
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          padding: "10px 16px 8px",
-          borderBottom: `1px solid ${C_HEADER_BORDER}`,
-          backgroundColor: "#fff",
+          padding: `8px ${UI_PAGE_PAD_X}px 6px`,
+          backgroundColor: "rgba(249, 250, 251, 0.94)",
+          borderBottom: `1px solid rgba(229, 232, 235, 0.56)`,
+          backdropFilter: "blur(18px)",
+          WebkitBackdropFilter: "blur(18px)",
         }}
       >
         <h1
           style={{
             margin: 0,
-            fontSize: 18,
-            fontWeight: 800,
-            color: "#111",
-            lineHeight: "27px",
-            letterSpacing: "-0.02em",
+            fontSize: 20,
+            fontWeight: 850,
+            color: grey900,
+            lineHeight: "28px",
+            letterSpacing: "-0.025em",
           }}
         >
           카테고리
@@ -174,40 +194,44 @@ export default function CategoryPage() {
         <button
           type="button"
           aria-label="새로고침"
-          onClick={() => toast.message("목록을 곧 새로고침합니다.")}
+          onClick={() => toast.message("목록을 곧 새로고침해요.")}
           style={{
-            width: 36,
-            height: 36,
+            width: 34,
+            height: 34,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             border: "none",
-            background: "none",
+            background: "#fff",
+            borderRadius: 999,
             cursor: "pointer",
-            color: "#111",
+            color: grey500,
           }}
         >
-          <RotateCw size={20} strokeWidth={2} />
+          <RotateCw size={16} strokeWidth={2.1} />
         </button>
       </div>
 
-      <div style={{ padding: "12px 16px 0", flexShrink: 0 }}>
+      <div style={{ padding: `12px ${UI_PAGE_PAD_X}px 0`, flexShrink: 0 }}>
         <label
           className="flex items-center gap-2"
           style={{
-            height: 41,
-            padding: "0 14px",
-            borderRadius: 999,
+            height: 46,
+            padding: "0 15px",
+            borderRadius: 15,
+            border: `1px solid rgba(229, 232, 235, 0.92)`,
             backgroundColor: C_SEARCH_BG,
             boxSizing: "border-box",
+            boxShadow: "0 1px 3px rgba(15, 23, 42, 0.035)",
           }}
         >
-          <Search size={14} strokeWidth={2} style={{ color: "rgba(17,17,17,0.45)", flexShrink: 0 }} aria-hidden />
+          <Search size={18} strokeWidth={2} style={{ color: grey500, flexShrink: 0 }} aria-hidden />
           <input
             type="search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="상품 검색"
+            className="placeholder:text-[#b0b8c1]"
             style={{
               flex: 1,
               minWidth: 0,
@@ -215,7 +239,8 @@ export default function CategoryPage() {
               border: "none",
               background: "transparent",
               fontSize: 14,
-              color: "#111",
+              fontWeight: 500,
+              color: grey900,
               outline: "none",
             }}
           />
@@ -227,7 +252,7 @@ export default function CategoryPage() {
         style={{
           display: "flex",
           gap: 7,
-          padding: "12px 16px",
+          padding: `10px ${UI_PAGE_PAD_X}px 12px`,
           overflowX: "auto",
           flexShrink: 0,
           scrollbarWidth: "none",
@@ -240,19 +265,20 @@ export default function CategoryPage() {
               key={f.id}
               type="button"
               onClick={() => setFilterAndUrl(f.id)}
+              className={active ? UI_IX_BUTTON : `${UI_IX_BUTTON} ${UI_IX_HOVER_GREY50} bg-white`}
               style={{
                 flexShrink: 0,
-                height: 36.5,
-                padding: "0 14px",
-                borderRadius: 999,
-                border: active ? "1.5px solid transparent" : `1.5px solid ${C_CHIP_BORDER}`,
-                backgroundColor: active ? C_PRIMARY : C_CHIP_IDLE_BG,
-                color: active ? "#fff" : "#555555",
-                fontSize: 13,
-                fontWeight: active ? 700 : 500,
-                lineHeight: "19.5px",
+                height: 32,
+                padding: "0 13px",
+                borderRadius: UI_R_BADGE,
+                border: active ? `1px solid ${blue50}` : `1px solid ${C_CHIP_BORDER}`,
+                background: active ? blue50 : "#ffffff",
+                color: active ? BRAND_PRIMARY : TEXT_META,
+                fontSize: 12.5,
+                fontWeight: active ? 800 : 600,
+                lineHeight: "32px",
                 cursor: "pointer",
-                boxShadow: active ? "0px 3px 5px rgba(67,88,232,0.3)" : "none",
+                boxShadow: "none",
                 whiteSpace: "nowrap",
               }}
             >
@@ -265,15 +291,22 @@ export default function CategoryPage() {
       <main
         style={{
           flex: 1,
-          padding: "0 14px 24px",
+          padding: `0 ${UI_PAGE_PAD_X}px 96px`,
           minHeight: 0,
         }}
       >
+        {visible.length === 0 ? (
+          <EmptyState
+            icon={<Search size={56} strokeWidth={1.25} />}
+            title="검색 결과가 없어요"
+            description="다른 검색어나 카테고리로 다시 찾아볼까요?"
+          />
+        ) : (
         <div
           style={{
             display: "grid",
             gridTemplateColumns: "1fr 1fr",
-            gap: 12,
+            gap: 10,
           }}
         >
           {visible.map((p) => (
@@ -288,28 +321,30 @@ export default function CategoryPage() {
                   nav(ROUTES.GROUP_BUY_DETAIL.replace(":id", String(p.id)));
                 }
               }}
+              className="transition-[transform,background-color] duration-150 ease-out active:scale-[0.98]"
               style={{
-                borderRadius: 16,
-                border: `1px solid ${C_CARD_BORDER}`,
-                backgroundColor: "#fff",
+                borderRadius: 18,
+                border: `1px solid rgba(229, 232, 235, 0.92)`,
+                backgroundColor: "#ffffff",
                 overflow: "hidden",
                 cursor: "pointer",
+                boxShadow: "0 1px 3px rgba(15, 23, 42, 0.035)",
               }}
             >
-              <div className="relative" style={{ aspectRatio: "1", backgroundColor: p.thumbBg }}>
+              <div className="relative" style={{ height: 136, background: `linear-gradient(145deg, ${p.thumbBg} 0%, ${blue50} 100%)` }}>
                 <span
                   style={{
                     position: "absolute",
                     left: 8,
                     top: 8,
-                    height: 22.5,
-                    padding: "0 9px",
-                    borderRadius: 999,
-                    backgroundColor: p.badge === "closing" ? C_BADGE_RED : C_BADGE_GREEN,
-                    color: "#fff",
-                    fontSize: 11,
-                    fontWeight: 700,
-                    lineHeight: "22.5px",
+                    height: 20,
+                    padding: "0 8px",
+                    borderRadius: UI_R_BADGE,
+                    backgroundColor: p.badge === "closing" ? BADGE_URGENT_BG : BADGE_INFO_BG,
+                    color: p.badge === "closing" ? BADGE_URGENT_TEXT : BADGE_INFO_TEXT,
+                    fontSize: 10,
+                    fontWeight: UI_BADGE_FW,
+                    lineHeight: "20px",
                   }}
                 >
                   {p.badge === "closing" ? "마감임박" : "모집중"}
@@ -324,8 +359,8 @@ export default function CategoryPage() {
                     postId={p.id}
                     style={{
                       padding: 4,
-                      color: "#9ca3af",
-                      background: "rgba(255,255,255,0.65)",
+                      color: TEXT_META,
+                      background: SCRIM_LIGHT,
                       borderRadius: 999,
                     }}
                     iconClassName="size-[18px]"
@@ -341,17 +376,17 @@ export default function CategoryPage() {
                   }}
                   aria-hidden
                 >
-                  <span style={{ fontSize: 56 }}>📦</span>
+                  <span style={{ fontSize: 46 }}>📦</span>
                 </div>
               </div>
-              <div style={{ padding: "10px 10px 12px", display: "flex", flexDirection: "column", gap: 4 }}>
+              <div style={{ padding: "11px 12px 12px", display: "flex", flexDirection: "column", gap: 4 }}>
                 <p
                   style={{
                     margin: 0,
-                    fontSize: 13,
-                    fontWeight: 700,
-                    color: C_TITLE,
-                    lineHeight: "19.5px",
+                    fontSize: 13.5,
+                    fontWeight: 800,
+                    color: grey900,
+                    lineHeight: "18.5px",
                     display: "-webkit-box",
                     WebkitLineClamp: 2,
                     WebkitBoxOrient: "vertical",
@@ -360,22 +395,20 @@ export default function CategoryPage() {
                 >
                   {p.title}
                 </p>
-                <p style={{ margin: 0, fontSize: 17, fontWeight: 800, color: C_PRIMARY, lineHeight: "25.5px" }}>
+                <p style={{ margin: 0, fontSize: 16.5, fontWeight: 850, color: BRAND_PRIMARY, lineHeight: "21px", letterSpacing: "-0.03em" }}>
                   {formatPrice(p.price)}
                 </p>
                 <div className="flex items-center" style={{ gap: 4 }}>
-                  <Users size={13} strokeWidth={2} style={{ color: C_META, flexShrink: 0 }} aria-hidden />
-                  <span style={{ fontSize: 11, color: C_META, lineHeight: "16.5px" }}>
-                    {p.current}/{p.max}명 참여중
+                  <Users size={13} strokeWidth={2} style={{ color: TEXT_META, flexShrink: 0 }} aria-hidden />
+                  <span style={{ fontSize: 11.5, fontWeight: 500, color: TEXT_META, lineHeight: "17px" }}>
+                    {p.current}/{p.max}명 참여 중
                   </span>
                 </div>
               </div>
             </article>
           ))}
         </div>
-        {visible.length === 0 ? (
-          <p style={{ textAlign: "center", color: C_META, fontSize: 14, marginTop: 32 }}>해당하는 공구가 없습니다.</p>
-        ) : null}
+        )}
       </main>
     </div>
   );

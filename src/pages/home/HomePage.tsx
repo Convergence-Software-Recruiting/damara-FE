@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
-import TradeTypeSheet, { type TradeType } from "./components/TradeTypeSheet";
 import HomeBanner from "./components/HomeBanner";
 import HomeCategoryChips from "./components/HomeCategoryChips";
 import HomePopularList from "./components/HomePopularList";
@@ -11,6 +10,7 @@ import HomePostList from "./components/HomePostList";
 
 import { ROUTES } from "../../app/router/routes";
 import { HOME_CANVAS } from "../../shared/constants/homeTheme";
+import type { HomeCategoryId } from "./constants/homeCategoryChipsData";
 
 const DESIGN_POSTS = [
   {
@@ -25,6 +25,7 @@ const DESIGN_POSTS = [
     status: "recruiting",
     visualType: "plus",
     tags: ["인기", "A형"],
+    categories: ["all", "daily"] as HomeCategoryId[],
   },
   {
     id: 3,
@@ -38,6 +39,7 @@ const DESIGN_POSTS = [
     status: "recruiting",
     visualType: "bar",
     tags: ["B형"],
+    categories: ["all", "food"] as HomeCategoryId[],
   },
 ];
 
@@ -70,20 +72,17 @@ const DESIGN_POPULAR_POSTS = [
 
 export default function HomePage() {
   const nav = useNavigate();
-  const [showTradeTypeSheet, setShowTradeTypeSheet] = useState(false);
-  const [activeCategory, setActiveCategory] = useState("food");
+  const [activeCategory, setActiveCategory] = useState<HomeCategoryId>("all");
   const [sortBy, setSortBy] = useState<SortKey>("latest");
 
-  useEffect(() => {
-    const handleOpenSheet = () => setShowTradeTypeSheet(true);
-    window.addEventListener("openTradeTypeSheet", handleOpenSheet);
-    return () => window.removeEventListener("openTradeTypeSheet", handleOpenSheet);
-  }, []);
+  const filteredPosts = useMemo(() => {
+    return DESIGN_POSTS.filter((p) => {
+      if (activeCategory === "all") return true;
+      return p.categories.includes(activeCategory);
+    });
+  }, [activeCategory]);
 
-  const handleSelectTradeType = (type: TradeType) => {
-    setShowTradeTypeSheet(false);
-    nav(`/create?type=${type}`);
-  };
+  const appliedFilterCount = activeCategory === "all" ? 0 : 1;
 
   return (
     <div
@@ -96,11 +95,11 @@ export default function HomePage() {
       }}
     >
       <main style={{ width: "100%", overflowX: "hidden", backgroundColor: HOME_CANVAS }}>
-        <div style={{ padding: "12px 16px 0" }}>
+        <div style={{ padding: "12px 20px 0" }}>
           <HomeBanner />
         </div>
 
-        <div style={{ paddingTop: 4 }}>
+        <div style={{ paddingTop: 6 }}>
           <HomeCategoryChips activeCategory={activeCategory} onChange={setActiveCategory} />
         </div>
 
@@ -109,27 +108,22 @@ export default function HomePage() {
           onItemClick={(id) => nav(ROUTES.GROUP_BUY_DETAIL.replace(":id", String(id)))}
         />
 
-        <div style={{ marginTop: 12, backgroundColor: HOME_CANVAS }}>
+        <div style={{ marginTop: 10, backgroundColor: HOME_CANVAS }}>
           <HomeSortTabs
             sortBy={sortBy}
-            totalCount={4}
+            totalCount={filteredPosts.length}
+            appliedFilterCount={appliedFilterCount}
             onChange={setSortBy}
-            onFilterClick={() => toast.message("필터는 곧 연결됩니다.")}
+            onFilterClick={() => toast.message("필터는 곧 연결돼요.")}
           />
         </div>
 
         <HomePostList
-          posts={DESIGN_POSTS}
+          posts={filteredPosts}
           sortBy={sortBy}
           onItemClick={(id) => nav(ROUTES.GROUP_BUY_DETAIL.replace(":id", String(id)))}
         />
       </main>
-
-      <TradeTypeSheet
-        isOpen={showTradeTypeSheet}
-        onClose={() => setShowTradeTypeSheet(false)}
-        onSelect={handleSelectTradeType}
-      />
     </div>
   );
 }

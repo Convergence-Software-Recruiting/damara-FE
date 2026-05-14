@@ -1,12 +1,28 @@
+import { Flame } from "lucide-react";
+
 import FavoriteHeartButton from "../../../features/group-buy/components/FavoriteHeartButton";
-import { HOME_BORDER, HOME_CONTROL, HOME_CONTROL_TEXT, HOME_SURFACE } from "../../../shared/constants/homeTheme";
+import {
+  BADGE_INFO_TEXT,
+  background,
+  BRAND_PRIMARY,
+  DANGER,
+  GHOST_ON_SOLID,
+  HOME_BORDER,
+  grey50,
+  TEXT_META,
+  TEXT_TITLE,
+} from "../../../shared/constants/homeTheme";
 
 interface HomePopularListProps {
   posts: any[];
   onItemClick: (id: number | string) => void;
 }
 
-const pastelTop = ["#E4E2EE", "#F2EDE4", "#F0E5E3"];
+const vividTop = [
+  "linear-gradient(145deg, #f4f8ff 0%, #eaf3ff 100%)",
+  "linear-gradient(145deg, #f7f8fa 0%, #eef2f6 100%)",
+  "linear-gradient(145deg, #f2fbf6 0%, #e7f8ed 100%)",
+] as const;
 
 function getFirstImageUrl(post: any): string | null {
   const firstImage = post.images?.[0];
@@ -30,42 +46,59 @@ export default function HomePopularList({ posts, onItemClick }: HomePopularListP
     .slice(0, 6);
 
   return (
-    <section aria-label="지금 인기 공동구매" style={{ paddingTop: 12 }}>
-      <div style={{ padding: "0 16px", marginBottom: 12 }}>
-        <div className="flex items-center" style={{ gap: 6 }}>
-          <span style={{ fontSize: 14, lineHeight: "21px" }} aria-hidden>
-            🔥
-          </span>
-          <h2
+    <section aria-label="지금 인기 공동구매" style={{ paddingTop: 14 }}>
+      <div style={{ padding: "0 20px", marginBottom: 10 }}>
+        <div className="flex items-center" style={{ gap: 10 }}>
+          <span
             style={{
-              margin: 0,
-              color: "#212529",
-              fontSize: 18,
-              fontWeight: 800,
-              lineHeight: "27px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: 24,
+              height: 24,
+              background: "transparent",
+              flexShrink: 0,
             }}
+            aria-hidden
           >
-            지금 인기 공동구매
-          </h2>
+            <Flame size={17} strokeWidth={2} color={DANGER} fill="rgba(240,68,82,0.12)" aria-hidden />
+          </span>
+          <div style={{ minWidth: 0 }}>
+            <p style={{ margin: 0, color: TEXT_META, fontSize: 11, fontWeight: 700, lineHeight: "16px" }}>
+              실시간 인기
+            </p>
+            <h2
+              style={{
+                margin: "2px 0 0",
+                color: TEXT_TITLE,
+                fontSize: 20,
+                fontWeight: 850,
+                lineHeight: "29px",
+                letterSpacing: "-0.03em",
+              }}
+            >
+              지금 인기 공동구매
+            </h2>
+          </div>
         </div>
       </div>
 
       <ul
         className="no-scrollbar flex overflow-x-auto"
         style={{
-          gap: 10,
-          padding: "0 16px 4px",
+          gap: 9,
+          padding: "0 20px 4px",
           margin: 0,
           scrollbarWidth: "none",
         }}
       >
         {sorted.map((post, idx) => {
           const imgUrl = getFirstImageUrl(post);
-          const topBg = pastelTop[idx % pastelTop.length];
+          const topBg = vividTop[idx % vividTop.length];
           const price = Math.floor(post.price ?? 0).toLocaleString();
 
           return (
-            <li key={post.id} style={{ width: 124, flex: "0 0 124px" }}>
+            <li key={post.id} style={{ width: 112, flex: "0 0 112px" }}>
               <div
                 role="button"
                 tabIndex={0}
@@ -79,34 +112,37 @@ export default function HomePopularList({ posts, onItemClick }: HomePopularListP
                 className="text-left"
                 style={{
                   width: "100%",
-                  height: 202,
+                  height: 174,
                   overflow: "hidden",
-                  borderRadius: 16,
-                  backgroundColor: HOME_SURFACE,
+                  borderRadius: 17,
+                  backgroundColor: "#ffffff",
                   border: `1px solid ${HOME_BORDER}`,
-                  boxShadow: "0 2px 12px rgba(0,0,0,0.05)",
+                  boxShadow: "0 1px 3px rgba(15,23,42,0.04)",
                   cursor: "pointer",
                 }}
               >
-                <div className="relative" style={{ height: 100, width: "100%", backgroundColor: topBg }}>
+                <div className="relative" style={{ height: 78, width: "100%", background: topBg }}>
                   {idx === 0 ? (
                     <span
                       style={{
                         position: "absolute",
-                        left: 7,
-                        top: 7,
+                        left: 8,
+                        top: 8,
                         height: 19,
-                        padding: "1.5px 8px",
+                        padding: "0 8px 0 6px",
                         borderRadius: 999,
-                        background: "linear-gradient(90deg, #ff4757, #fa5252)",
-                        boxShadow: "0 2px 3px rgba(250,82,82,0.4)",
-                        color: "#ffffff",
+                        backgroundColor: DANGER,
+                        color: background,
                         fontSize: 10,
                         fontWeight: 700,
-                        lineHeight: "15px",
+                        lineHeight: "19px",
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: 3,
                       }}
                     >
-                      🔥 HOT
+                      <Flame size={11} strokeWidth={1.9} color={background} fill={GHOST_ON_SOLID} aria-hidden />
+                      HOT
                     </span>
                   ) : null}
                   <FavoriteHeartButton
@@ -116,7 +152,7 @@ export default function HomePopularList({ posts, onItemClick }: HomePopularListP
                       right: 5,
                       top: 5,
                       padding: 2,
-                      color: "#9ca3af",
+                      color: TEXT_META,
                       zIndex: 2,
                     }}
                     iconClassName="size-4"
@@ -126,7 +162,7 @@ export default function HomePopularList({ posts, onItemClick }: HomePopularListP
                       <img
                         src={imgUrl}
                         alt=""
-                        style={{ maxWidth: 56, maxHeight: 56, objectFit: "contain" }}
+                        style={{ maxWidth: 48, maxHeight: 48, objectFit: "contain" }}
                         onError={(e) => {
                           (e.currentTarget as HTMLImageElement).style.display = "none";
                         }}
@@ -134,10 +170,10 @@ export default function HomePopularList({ posts, onItemClick }: HomePopularListP
                     ) : (
                       <span
                         style={{
-                          fontSize: 48,
+                          fontSize: 32,
                           fontWeight: 700,
                           lineHeight: 1,
-                          color: idx === 0 ? "#3d5cff" : idx === 1 ? "#ffd43b" : "#212529",
+                          filter: "drop-shadow(0 2px 6px rgba(0,0,0,0.12))",
                         }}
                         aria-hidden
                       >
@@ -146,34 +182,35 @@ export default function HomePopularList({ posts, onItemClick }: HomePopularListP
                     )}
                   </div>
                 </div>
-                <div style={{ padding: "9px 10px 12px" }}>
-                  <div className="flex items-center" style={{ gap: 4, height: 18 }}>
+                <div style={{ padding: "9px 10px 10px" }}>
+                  <div className="flex items-center" style={{ gap: 5, height: 18 }}>
                     <span
                       style={{
                         height: 18,
-                        padding: "2px 7px",
+                        padding: "0 8px",
                         borderRadius: 999,
-                        backgroundColor: HOME_CONTROL,
-                        color: HOME_CONTROL_TEXT,
+                        backgroundColor: grey50,
+                        color: BADGE_INFO_TEXT,
                         fontSize: 9,
                         fontWeight: 700,
-                        lineHeight: "13.5px",
+                        lineHeight: "18px",
                       }}
                     >
                       모집중
                     </span>
-                    <span style={{ color: "#9ca3af", fontSize: 9, lineHeight: "13.5px" }}>
+                    <span style={{ color: TEXT_META, fontSize: 9, lineHeight: "13.5px" }}>
                       {post.currentQuantity ?? 0}/{post.minParticipants ?? 2}
                     </span>
                   </div>
                   <p
                     style={{
-                      margin: "5px 0 0",
-                      minHeight: 33,
-                      color: "#212529",
+                      margin: "6px 0 0",
+                      minHeight: 30,
+                      color: TEXT_TITLE,
                       fontSize: 11,
                       fontWeight: 700,
-                      lineHeight: "16.5px",
+                      lineHeight: "17px",
+                      letterSpacing: "-0.02em",
                       display: "-webkit-box",
                       WebkitLineClamp: 2,
                       WebkitBoxOrient: "vertical",
@@ -184,11 +221,12 @@ export default function HomePopularList({ posts, onItemClick }: HomePopularListP
                   </p>
                   <p
                     style={{
-                      margin: 0,
-                      color: "#3d5cff",
-                      fontSize: 16,
+                      margin: "4px 0 0",
+                      color: BRAND_PRIMARY,
+                      fontSize: 14,
                       fontWeight: 800,
-                      lineHeight: "24px",
+                      lineHeight: "22px",
+                      letterSpacing: "-0.03em",
                     }}
                   >
                     {price}원

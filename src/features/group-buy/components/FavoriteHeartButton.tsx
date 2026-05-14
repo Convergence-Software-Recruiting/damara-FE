@@ -1,10 +1,12 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Heart } from "lucide-react";
-import { toast } from "sonner";
 
 import { addFavorite, checkFavorite, removeFavorite } from "../api/groupBuyApi";
 import { readFavoriteFlag } from "../utils/favoriteResponse";
+import { DANGER } from "../../../shared/constants/homeTheme";
 import { STORAGE_KEYS } from "../../../shared/constants/storageKeys";
+import { UI_IX_BUTTON, UI_IX_HOVER_GREY50 } from "../../../shared/constants/damaraUISystem";
+import { damaraToast, damaraToastMessages } from "../../../shared/lib/damaraToast";
 
 interface FavoriteHeartButtonProps {
   postId: number | string;
@@ -46,7 +48,7 @@ export default function FavoriteHeartButton({
       e.stopPropagation();
       e.preventDefault();
       if (!userId) {
-        toast.error("로그인이 필요합니다.");
+        damaraToast.error("로그인이 필요해요.");
         return;
       }
       if (loading) return;
@@ -56,9 +58,14 @@ export default function FavoriteHeartButton({
       try {
         if (next) await addFavorite(String(postId), userId);
         else await removeFavorite(String(postId), userId);
+        if (next) {
+          damaraToast.show(damaraToastMessages.favoriteAdded);
+        } else {
+          damaraToast.show(damaraToastMessages.favoriteRemoved);
+        }
       } catch {
         setIsFavorite(!next);
-        toast.error("찜 처리에 실패했습니다.");
+        damaraToast.error("찜 처리에 실패했어요.");
       } finally {
         setLoading(false);
       }
@@ -73,14 +80,14 @@ export default function FavoriteHeartButton({
       disabled={loading}
       aria-pressed={isFavorite}
       aria-label={isFavorite ? "관심 해제" : "관심 등록"}
-      className={className}
+      className={[UI_IX_BUTTON, UI_IX_HOVER_GREY50, className].filter(Boolean).join(" ")}
       style={style}
     >
       <Heart
         className={iconClassName}
         strokeWidth={1.75}
-        fill={isFavorite ? "#fa5252" : "none"}
-        color={isFavorite ? "#fa5252" : "currentColor"}
+        fill={isFavorite ? DANGER : "none"}
+        color={isFavorite ? DANGER : "currentColor"}
       />
     </button>
   );

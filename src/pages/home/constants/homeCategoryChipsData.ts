@@ -1,13 +1,16 @@
+export type HomeCategoryId = "all" | "food" | "daily" | "beauty" | "stationery";
+
 export interface CategoryItem {
-  id: string;
+  id: HomeCategoryId;
   label: string;
   emoji: string;
 }
 
-/** 홈 상단 카테고리 칩 데이터 — 컴포넌트 파일과 분리해 HMR Fast Refresh가 깨지지 않게 함 */
+/** 카테고리 탭과 동일한 id·라벨 — 홈 상단 칩과 목록 필터 기준을 맞춤 */
 export const HOME_CATEGORIES: CategoryItem[] = [
   { id: "all", label: "전체", emoji: "" },
-  { id: "food", label: "먹거리", emoji: "🍴" },
-  { id: "daily", label: "일상용품", emoji: "🛒" },
-  { id: "beauty", label: "뷰티·패션", emoji: "💄" },
+  { id: "food", label: "🍴 먹거리", emoji: "" },
+  { id: "daily", label: "🧴 생활용품", emoji: "" },
+  { id: "beauty", label: "👜 뷰티·패션", emoji: "" },
+  { id: "stationery", label: "✏️ 학용품", emoji: "" },
 ];

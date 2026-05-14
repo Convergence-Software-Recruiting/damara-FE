@@ -1,6 +1,8 @@
 import React from "react";
 import { EnhancedPostFields } from "../utils/enhancedPostMapper";
 import { TradeMethodBadge } from "./TrustBadges";
+import { grey600, grey900, HOME_BORDER } from "../../../shared/constants/homeTheme";
+import ConfirmBottomSheet from "../../../shared/components/damara/ConfirmBottomSheet";
 
 interface ParticipationConfirmModalProps {
   isOpen: boolean;
@@ -19,8 +21,6 @@ export default function ParticipationConfirmModal({
   postTitle,
   isLoading = false,
 }: ParticipationConfirmModalProps) {
-  if (!isOpen) return null;
-
   const agreements = [
     {
       label: "거래 방식",
@@ -37,54 +37,50 @@ export default function ParticipationConfirmModal({
     { label: "파손 정산", value: data.agreementDamagePolicy },
   ].filter((a) => a.value);
 
+  const description = [postTitle?.trim(), "아래 약속을 확인했을 때만 참여해 주세요."].filter(Boolean).join("\n\n");
+
   return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
-      }}
+    <ConfirmBottomSheet
+      open={isOpen}
+      title="이 공동구매에 참여할까요?"
+      description={description}
+      confirmLabel={isLoading ? "처리 중…" : "네, 참여할게요"}
+      cancelLabel="닫기"
+      onConfirm={onConfirm}
+      onClose={onClose}
+      loading={isLoading}
+      cancelVariant="text"
+      showCloseButton
     >
-      <div>
-        <div>
-          <div>
-            <p>참여 전 확인</p>
-            {postTitle && <p>{postTitle}</p>}
-          </div>
-          <button type="button" onClick={onClose} aria-label="닫기" />
-        </div>
-
-        <div>
-          아래 거래 약속을 확인하고 동의한 경우에만 참여해주세요.
-        </div>
-
-        <div>
-          {agreements.map((a) => (
-            <div key={a.label}>
-              <span>{a.label}</span>
-              {typeof a.value === "string" ? (
-                <span>{a.value}</span>
-              ) : (
-                <span>{a.value}</span>
-              )}
-            </div>
-          ))}
-        </div>
-
-        <div>
-          <button
-            type="button"
-            onClick={onConfirm}
-            disabled={isLoading}
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 0,
+          borderRadius: 16,
+          border: `1px solid ${HOME_BORDER}`,
+          overflow: "hidden",
+        }}
+      >
+        {agreements.map((a, i) => (
+          <div
+            key={a.label}
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              gap: 12,
+              padding: "14px 16px",
+              borderTop: i === 0 ? "none" : `1px solid ${HOME_BORDER}`,
+              backgroundColor: "#fafbfc",
+            }}
           >
-            
-            {isLoading ? "처리 중..." : "위 내용을 확인했고 참여합니다"}
-          </button>
-          <button type="button" onClick={onClose}>
-            취소
-          </button>
-        </div>
+            <span style={{ fontSize: 13, fontWeight: 600, color: grey900, flexShrink: 0 }}>{a.label}</span>
+            <span style={{ fontSize: 13, fontWeight: 500, color: grey600, textAlign: "right", minWidth: 0 }}>
+              {typeof a.value === "string" ? a.value : a.value}
+            </span>
+          </div>
+        ))}
       </div>
-    </div>
+    </ConfirmBottomSheet>
   );
 }

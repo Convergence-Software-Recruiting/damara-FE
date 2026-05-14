@@ -1,4 +1,4 @@
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 
 import SplashPage from "../../pages/splash/SplashPage";
 import LoginPage from "../../pages/auth/LoginPage";
@@ -12,18 +12,23 @@ import MyCreatedGroupBuyPage from "../../pages/group-buy/MyCreatedGroupBuyPage";
 import MyJoinedGroupBuyPage from "../../pages/group-buy/MyJoinedGroupBuyPage";
 import FavoriteGroupBuyPage from "../../pages/group-buy/FavoriteGroupBuyPage";
 import TrustInfoPage from "../../pages/mypage/TrustInfoPage";
+import NoticePage from "../../pages/mypage/NoticePage";
 import SettingsPage from "../../pages/mypage/SettingsPage";
 import FAQPage from "../../pages/mypage/FAQPage";
+import WithdrawPage from "../../pages/mypage/WithdrawPage";
+import LogoutPage from "../../pages/mypage/LogoutPage";
 import CategoryPage from "../../pages/category/CategoryPage";
 
 import MobileLayout from "../../shared/components/layout/MobileLayout";
 import BottomTabBar from "../../shared/components/layout/BottomTabBar";
 import AppHeader from "../../shared/components/layout/AppHeader";
+import { Toaster } from "../../shared/components/ui/sonner";
 import { APP_HEADER_HEIGHT_PX, APP_TAB_BAR_HEIGHT_PX } from "../../shared/components/layout/appShellConstants";
 
 import { ROUTES, SHOW_APP_CHROME_PATHS, SHOW_BOTTOM_NAV_PATHS, normalizeAppPath } from "./routes";
 
 export default function AppRouter() {
+  const nav = useNavigate();
   const { pathname } = useLocation();
   const pathKey = normalizeAppPath(pathname);
   const showBottomNav = SHOW_BOTTOM_NAV_PATHS.includes(pathKey);
@@ -60,12 +65,16 @@ export default function AppRouter() {
           <Route path={ROUTES.MY_JOINED} element={<MyJoinedGroupBuyPage />} />
           <Route path={ROUTES.FAVORITES} element={<FavoriteGroupBuyPage />} />
           <Route path={ROUTES.TRUST_INFO} element={<TrustInfoPage />} />
+          <Route path={ROUTES.NOTICE} element={<NoticePage />} />
           <Route path={ROUTES.SETTINGS} element={<SettingsPage />} />
           <Route path={ROUTES.FAQ} element={<FAQPage />} />
+          <Route path={ROUTES.WITHDRAW} element={<WithdrawPage />} />
+          <Route path={ROUTES.LOGOUT} element={<LogoutPage />} />
         </Routes>
       </div>
 
-      {showBottomNav && <BottomTabBar />}
+      {showBottomNav && <BottomTabBar onCreateClick={() => nav(ROUTES.GROUP_BUY_CREATE)} />}
+      <Toaster showBottomTab={showBottomNav} />
     </MobileLayout>
   );
 }

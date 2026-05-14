@@ -1,0 +1,49 @@
+/**
+ * 다마라 전역 Toast (Sonner) — Toss-like 다크 스낵바
+ * 마크업: [data-sonner-toaster].damara-sonner-toaster
+ */
+
+.damara-sonner-toaster {
+  z-index: 120 !important;
+}
+
+.damara-sonner-toaster [data-sonner-toast] {
+  background: #191f28 !important;
+  color: #ffffff !important;
+  border-radius: 14px !important;
+  padding: 12px 16px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  border: none !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.14) !important;
+}
+
+.damara-sonner-toaster [data-sonner-toast] [data-title],
+.damara-sonner-toaster [data-sonner-toast] .damara-toast-title {
+  color: #ffffff !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  line-height: 1.45 !important;
+}
+
+.damara-sonner-toaster [data-sonner-toast] [data-description],
+.damara-sonner-toaster [data-sonner-toast] .damara-toast-description {
+  color: rgba(255, 255, 255, 0.78) !important;
+  font-size: 13px !important;
+  font-weight: 400 !important;
+}
+
+@keyframes damara-toast-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 6px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.damara-sonner-toaster [data-sonner-toast][data-visible="true"] {
+  animation: damara-toast-in 0.22s ease-out both;
+}

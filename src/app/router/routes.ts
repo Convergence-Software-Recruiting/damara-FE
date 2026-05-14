@@ -19,8 +19,11 @@ export const ROUTES = {
   MY_JOINED: "/participated",
   FAVORITES: "/favorites",
   TRUST_INFO: "/trust-info",
+  NOTICE: "/notice",
   SETTINGS: "/settings",
   FAQ: "/faq",
+  WITHDRAW: "/withdraw",
+  LOGOUT: "/logout",
   CATEGORY: "/category",
 } as const;
 

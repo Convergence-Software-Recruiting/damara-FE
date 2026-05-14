@@ -1,11 +1,16 @@
 import React from "react";
 import GroupBuyCard from "../../../features/group-buy/components/GroupBuyCard";
+import EmptyState from "../../../shared/components/damara/EmptyState";
+import { SkeletonGroupBuyRow } from "../../../shared/components/damara/Skeleton";
+import { UI_CARD_LIST_GAP, UI_PAGE_PAD_X } from "../../../shared/constants/damaraUISystem";
+import { Package } from "lucide-react";
 import type { SortKey } from "./HomeSortTabs";
 
 interface HomePostListProps {
   posts: any[];
   sortBy?: SortKey;
   emptyText?: string;
+  loading?: boolean;
   onItemClick: (id: number | string) => void;
 }
 
@@ -50,21 +55,36 @@ function mapStatus(raw: string | undefined): "open" | "closed" | "in_progress" |
 export default function HomePostList({
   posts,
   sortBy,
-  emptyText = "게시글이 없습니다.",
+  emptyText,
+  loading = false,
   onItemClick,
 }: HomePostListProps) {
   const sorted = sortPosts(posts, sortBy);
 
+  if (loading) {
+    return (
+      <ul className="flex flex-col" style={{ gap: UI_CARD_LIST_GAP, padding: `4px ${UI_PAGE_PAD_X}px 24px` }}>
+        {[0, 1, 2, 3].map((k) => (
+          <li key={k}>
+            <SkeletonGroupBuyRow />
+          </li>
+        ))}
+      </ul>
+    );
+  }
+
   if (sorted.length === 0) {
     return (
-      <div className="px-4 py-16 text-center text-[14px] text-[#9ca3af]" data-empty>
-        {emptyText}
-      </div>
+      <EmptyState
+        icon={<Package size={56} strokeWidth={1.25} />}
+        title="공동구매가 없어요"
+        description={emptyText || "새 공동구매가 올라오면 여기에서 볼 수 있어요."}
+      />
     );
   }
 
   return (
-    <ul className="flex flex-col">
+    <ul className="flex flex-col" style={{ gap: UI_CARD_LIST_GAP, padding: `4px ${UI_PAGE_PAD_X}px 96px` }}>
       {sorted.map((post) => (
         <li key={post.id}>
           <GroupBuyCard

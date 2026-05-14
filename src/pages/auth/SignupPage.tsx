@@ -1,51 +1,83 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff, IdCard, Lock, Mail, User } from "lucide-react";
-import { registerUser, loginUser } from "../../features/auth/api/authApi";
 import { toast } from "sonner";
-import { getAuthErrorMessage } from "../../shared/utils/apiError";
+import { loginUser, registerUser } from "../../features/auth/api/authApi";
 import { STORAGE_KEYS } from "../../shared/constants/storageKeys";
+import { getAuthErrorMessage } from "../../shared/utils/apiError";
+import damaraLogo from "../../assets/logo_damara.png";
+import {
+  background,
+  blue500,
+  blue600,
+  DANGER,
+  DANGER_BG,
+  grey400,
+  grey500,
+  grey700,
+  grey900,
+  red200,
+} from "../../shared/constants/homeTheme";
 
-/** Figma node 21:363 — 390×844 회원가입 */
-const FIGMA = {
-  brand: "#5a6fe8",
-  tagline: "#8a93b8",
-  muted: "#747b8f",
-  link: "#5f72f0",
-  bgGradient:
-    "linear-gradient(180deg, #e2e7f5 0%, #dce6f9 30%, #e8effc 60%, #f4f7ff 80%, #ffffff 100%)",
-  fieldBorder: "#e0e4ef",
-  placeholder: "rgba(42,46,66,0.5)",
-  btn: "#6071f2",
-} as const;
+const pageWrap: React.CSSProperties = {
+  position: "relative",
+  minHeight: "100dvh",
+  height: "100dvh",
+  width: "100%",
+  overflow: "hidden",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  padding: 0,
+  boxSizing: "border-box",
+  background: "#F5F9FF",
+};
 
-const cardStyle: React.CSSProperties = {
-  position: "absolute",
-  left: 35,
-  top: 289,
-  width: 319,
-  height: 398,
-  background: "#fff",
-  borderRadius: 24,
-  boxShadow: "0 4px 15px rgba(90,111,232,0.1)",
+const screen: React.CSSProperties = {
+  position: "relative",
+  width: "100%",
+  maxWidth: "none",
+  height: "100dvh",
+  minHeight: 0,
+  overflow: "hidden",
+  background: "#F5F9FF",
+};
+
+const content: React.CSSProperties = {
+  position: "relative",
+  zIndex: 2,
+  height: "100%",
+  padding: "198px 56px 28px",
+  display: "flex",
+  flexDirection: "column",
   boxSizing: "border-box",
 };
 
-const fieldRow = (top: number): React.CSSProperties => ({
-  position: "absolute",
-  left: 20,
-  top,
-  width: 279,
-  height: 48,
+const brandMark: React.CSSProperties = {
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  gap: 13,
+  marginBottom: 28,
+};
+
+const brandOrb: React.CSSProperties = {
+  width: 42,
+  height: 42,
+  borderRadius: 13,
+  overflow: "hidden",
+  background: "#fff",
+  border: "1px solid rgba(49, 130, 246, 0.12)",
+  boxShadow: "0 10px 24px rgba(49, 130, 246, 0.16)",
+};
+
+const lineField: React.CSSProperties = {
   display: "flex",
   alignItems: "center",
   gap: 12,
-  padding: "1.5px 13.5px 1.5px 17.5px",
-  background: "#fff",
-  border: `1.5px solid ${FIGMA.fieldBorder}`,
-  borderRadius: 14,
-  boxSizing: "border-box",
-});
+  height: 38,
+  borderBottom: "1.5px solid rgba(49, 130, 246, 0.22)",
+};
 
 const inputStyle: React.CSSProperties = {
   flex: 1,
@@ -54,13 +86,48 @@ const inputStyle: React.CSSProperties = {
   border: 0,
   outline: "none",
   background: "transparent",
-  color: "#2a2e42",
+  color: grey900,
   fontFamily: "Pretendard, Inter, system-ui, sans-serif",
+  fontSize: 14,
+  fontWeight: 600,
+};
+
+const iconProps = {
+  color: "#6B9FEA",
+  strokeWidth: 1.9,
+  "aria-hidden": true,
+} as const;
+
+const submitButton: React.CSSProperties = {
+  width: 174,
+  height: 44,
+  alignSelf: "center",
+  border: 0,
+  borderRadius: 14,
+  color: background,
+  background: "linear-gradient(135deg, #4593FC 0%, #3182F6 100%)",
+  boxShadow: "0 12px 22px rgba(49, 130, 246, 0.28)",
   fontSize: 15,
+  fontWeight: 800,
+  cursor: "pointer",
+  transition: "transform 0.14s ease, filter 0.14s ease, opacity 0.18s ease",
 };
 
 export default function SignupPage() {
   const nav = useNavigate();
+
+  useEffect(() => {
+    const html = document.documentElement;
+    const body = document.body;
+    const prevHtml = html.style.overflow;
+    const prevBody = body.style.overflow;
+    html.style.overflow = "hidden";
+    body.style.overflow = "hidden";
+    return () => {
+      html.style.overflow = prevHtml;
+      body.style.overflow = prevBody;
+    };
+  }, []);
 
   const [nickname, setNickname] = useState("");
   const [studentId, setStudentId] = useState("");
@@ -69,7 +136,6 @@ export default function SignupPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
-
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -116,292 +182,364 @@ export default function SignupPage() {
     }
   };
 
-  const iconColor = FIGMA.brand;
-
   return (
-    <div
-      data-page="회원가입"
-      style={{
-        position: "relative",
-        isolation: "isolate",
-        minHeight: "100dvh",
-        width: "100%",
-        overflowX: "hidden",
-        background: FIGMA.bgGradient,
-        backgroundColor: "#e2e7f5",
-      }}
-    >
+    <div data-page="회원가입" style={pageWrap}>
       <style>
         {`
-          .damara-signup-input::placeholder {
-            color: ${FIGMA.placeholder};
-            opacity: 1;
+          .damara-line-input::placeholder {
+            color: ${grey500};
+            opacity: 0.86;
+          }
+          .damara-line-field:focus-within {
+            border-bottom-color: ${blue500};
+          }
+          .damara-signup-submit:active:not(:disabled) {
+            transform: translateY(1px);
+            filter: brightness(0.98);
+          }
+          .damara-signup-submit:disabled {
+            opacity: 0.62;
+            cursor: wait;
+          }
+          .damara-soft-link:hover {
+            color: ${blue600} !important;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+          }
+          .damara-soft-link:focus-visible,
+          .damara-password-eye:focus-visible {
+            outline: 2px solid rgba(49, 130, 246, 0.36);
+            outline-offset: 3px;
+          }
+          @media (max-height: 700px) {
+            .damara-signup-content {
+              padding-top: 176px !important;
+              padding-bottom: 22px !important;
+            }
+            .damara-brand-mark {
+              margin-bottom: 20px !important;
+            }
+            .damara-signup-form {
+              gap: 18px !important;
+            }
+            .damara-signup-copy {
+              display: none !important;
+            }
+          }
+          @media (max-width: 370px) {
+            .damara-signup-content {
+              padding-left: 42px !important;
+              padding-right: 42px !important;
+            }
           }
         `}
       </style>
 
-      <div
-        style={{
-          position: "relative",
-          zIndex: 1,
-          width: "100%",
-          maxWidth: 390,
-          minHeight: "100dvh",
-          height: 844,
-          margin: "0 auto",
-        }}
-      >
-        <header
+      <main style={screen}>
+        <svg
+          aria-hidden
+          viewBox="0 0 362 178"
+          preserveAspectRatio="none"
           style={{
             position: "absolute",
-            left: 0,
-            top: 157.5,
+            inset: "0 0 auto 0",
             width: "100%",
-            textAlign: "center",
+            height: 178,
+            display: "block",
+            zIndex: 1,
           }}
         >
-          <h1
-            style={{
-              margin: 0,
-              color: FIGMA.brand,
-              fontFamily: "Inter, Pretendard, system-ui, sans-serif",
-              fontSize: 46,
-              fontWeight: 800,
-              lineHeight: "46px",
-              letterSpacing: 3,
-            }}
-          >
-            DAMARA
-          </h1>
-          <p
-            style={{
-              margin: "12px 0 0",
-              color: FIGMA.tagline,
-              fontSize: 15,
-              lineHeight: "22.5px",
-              letterSpacing: 0.5,
-            }}
-          >
-            함께 사고, 부담은 가볍게
-          </p>
-        </header>
+          <defs>
+            <linearGradient id="damaraSignupWaveA" x1="0" x2="1" y1="0" y2="1">
+              <stop offset="0%" stopColor="#5B9FFF" />
+              <stop offset="100%" stopColor="#3182F6" />
+            </linearGradient>
+            <linearGradient id="damaraSignupWaveB" x1="0" x2="1" y1="0" y2="1">
+              <stop offset="0%" stopColor="#C9E2FF" />
+              <stop offset="100%" stopColor="#5B9FFF" />
+            </linearGradient>
+          </defs>
+          <rect width="362" height="178" fill="url(#damaraSignupWaveA)" />
+          <path
+            d="M0 48C37 78 66 73 103 44C141 14 172 35 203 78C239 128 275 143 315 119C337 106 350 92 362 80V178H0V48Z"
+            fill="url(#damaraSignupWaveB)"
+            opacity="0.78"
+          />
+          <path
+            d="M0 142C34 166 71 160 111 122C153 82 198 80 238 115C278 151 317 158 362 140V178H0V142Z"
+            fill="#F5F9FF"
+          />
+          <path d="M74 -24L257 164" stroke="rgba(255,255,255,0.22)" />
+          <path d="M210 -30L72 160" stroke="rgba(255,255,255,0.18)" />
+        </svg>
 
-        <form
-          style={cardStyle}
-          onSubmit={(e) => {
-            e.preventDefault();
-            void handleRegister();
-          }}
-          noValidate
-        >
+        <div className="damara-signup-content" style={content}>
+          <div className="damara-brand-mark" style={brandMark}>
+            <div aria-hidden style={brandOrb}>
+              <img
+                src={damaraLogo}
+                alt=""
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                  display: "block",
+                  transform: "scale(1.55)",
+                }}
+              />
+            </div>
+            <div>
+              <div
+                style={{
+                  color: blue500,
+                  fontFamily: "Montserrat, Pretendard, system-ui, sans-serif",
+                  fontSize: 23,
+                  fontWeight: 700,
+                  lineHeight: 1,
+                }}
+              >
+                DAMARA
+              </div>
+              <p
+                style={{
+                  margin: "7px 0 0",
+                  color: grey500,
+                  fontSize: 12,
+                  fontWeight: 600,
+                  lineHeight: 1.3,
+                }}
+              >
+                계정을 만들고 공동구매를 시작해요
+              </p>
+            </div>
+          </div>
+
           {error ? (
             <div
               role="alert"
               style={{
-                position: "absolute",
-                left: 16,
-                right: 16,
-                top: 4,
-                zIndex: 2,
-                borderRadius: 10,
-                background: "rgba(212, 24, 61, 0.1)",
-                padding: "6px 8px",
-                textAlign: "center",
-                color: "#d4183d",
+                marginBottom: 14,
+                borderRadius: 12,
+                border: `1px solid ${red200}`,
+                background: DANGER_BG,
+                padding: "9px 12px",
+                color: DANGER,
                 fontSize: 12,
+                lineHeight: 1.45,
+                textAlign: "center",
               }}
             >
               {error}
             </div>
           ) : null}
 
-          <div style={fieldRow(24)}>
-            <User aria-hidden style={{ width: 22, height: 22, flexShrink: 0, color: iconColor }} strokeWidth={1.75} />
-            <input
-              className="damara-signup-input"
-              id="signup-name"
-              type="text"
-              autoComplete="name"
-              aria-label="이름"
-              value={nickname}
-              onChange={(e) => {
-                setNickname(e.target.value);
-                setError("");
-              }}
-              placeholder="이름을 입력하세요"
-              style={inputStyle}
-            />
-          </div>
-
-          <div style={fieldRow(82)}>
-            <IdCard aria-hidden style={{ width: 22, height: 18, flexShrink: 0, color: iconColor }} strokeWidth={1.75} />
-            <input
-              className="damara-signup-input"
-              id="signup-student-id"
-              type="text"
-              autoComplete="username"
-              aria-label="학번"
-              value={studentId}
-              onChange={(e) => {
-                setStudentId(e.target.value);
-                setError("");
-              }}
-              placeholder="학번을 입력하세요"
-              style={inputStyle}
-            />
-          </div>
-
-          <div style={fieldRow(140)}>
-            <Mail aria-hidden style={{ width: 22, height: 18, flexShrink: 0, color: iconColor }} strokeWidth={1.75} />
-            <input
-              className="damara-signup-input"
-              id="signup-email"
-              type="email"
-              autoComplete="email"
-              aria-label="학교 이메일"
-              value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-                setError("");
-              }}
-              placeholder="학교 이메일을 입력하세요"
-              style={inputStyle}
-            />
-          </div>
-
-          <div style={{ ...fieldRow(198), paddingRight: 10 }}>
-            <Lock aria-hidden style={{ width: 20, height: 22, flexShrink: 0, color: iconColor }} strokeWidth={1.75} />
-            <input
-              className="damara-signup-input"
-              id="signup-password"
-              type={showPassword ? "text" : "password"}
-              autoComplete="new-password"
-              aria-label="비밀번호"
-              value={password}
-              onChange={(e) => {
-                setPassword(e.target.value);
-                setError("");
-              }}
-              placeholder="비밀번호를 입력하세요"
-              style={inputStyle}
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword((v) => !v)}
-              aria-label={showPassword ? "비밀번호 숨기기" : "비밀번호 보기"}
-              style={{
-                width: 30,
-                height: 24,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                flexShrink: 0,
-                padding: 4,
-                border: 0,
-                background: "transparent",
-                color: "#a8b1d3",
-                cursor: "pointer",
-              }}
-            >
-              {showPassword ? <Eye size={16} strokeWidth={2} /> : <EyeOff size={16} strokeWidth={2} />}
-            </button>
-          </div>
-
-          <div style={{ ...fieldRow(256), paddingRight: 10 }}>
-            <Lock aria-hidden style={{ width: 20, height: 22, flexShrink: 0, color: iconColor }} strokeWidth={1.75} />
-            <input
-              className="damara-signup-input"
-              id="signup-password-confirm"
-              type={showConfirm ? "text" : "password"}
-              autoComplete="new-password"
-              aria-label="비밀번호 확인"
-              value={confirmPassword}
-              onChange={(e) => {
-                setConfirmPassword(e.target.value);
-                setError("");
-              }}
-              placeholder="비밀번호를 다시 입력하세요"
-              style={inputStyle}
-            />
-            <button
-              type="button"
-              onClick={() => setShowConfirm((v) => !v)}
-              aria-label={showConfirm ? "비밀번호 확인 숨기기" : "비밀번호 확인 보기"}
-              style={{
-                width: 30,
-                height: 24,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                flexShrink: 0,
-                padding: 4,
-                border: 0,
-                background: "transparent",
-                color: "#a8b1d3",
-                cursor: "pointer",
-              }}
-            >
-              {showConfirm ? <Eye size={16} strokeWidth={2} /> : <EyeOff size={16} strokeWidth={2} />}
-            </button>
-          </div>
-
-          <button
-            type="submit"
-            disabled={isLoading}
+          <form
+            className="damara-signup-form"
             style={{
-              position: "absolute",
-              left: 20,
-              top: 328,
-              width: 279,
-              height: 50,
-              border: 0,
-              borderRadius: 14,
-              background: FIGMA.btn,
-              boxShadow: "0 6px 10px rgba(96,113,242,0.35)",
-              color: "#fff",
-              fontSize: 17,
-              fontWeight: 700,
-              letterSpacing: 1,
-              cursor: isLoading ? "default" : "pointer",
-              opacity: isLoading ? 0.55 : 1,
+              display: "flex",
+              flexDirection: "column",
+              gap: 22,
+            }}
+            onSubmit={(e) => {
+              e.preventDefault();
+              void handleRegister();
+            }}
+            noValidate
+          >
+            <div className="damara-line-field" style={lineField}>
+              <User width={16} height={16} {...iconProps} />
+              <input
+                className="damara-line-input"
+                id="signup-name"
+                type="text"
+                autoComplete="name"
+                aria-label="이름"
+                value={nickname}
+                onChange={(e) => {
+                  setNickname(e.target.value);
+                  setError("");
+                }}
+                placeholder="이름"
+                style={inputStyle}
+              />
+            </div>
+
+            <div className="damara-line-field" style={lineField}>
+              <IdCard width={16} height={16} {...iconProps} />
+              <input
+                className="damara-line-input"
+                id="signup-student-id"
+                type="text"
+                autoComplete="username"
+                aria-label="학번"
+                value={studentId}
+                onChange={(e) => {
+                  setStudentId(e.target.value);
+                  setError("");
+                }}
+                placeholder="학번"
+                style={inputStyle}
+              />
+            </div>
+
+            <div className="damara-line-field" style={lineField}>
+              <Mail width={16} height={16} {...iconProps} />
+              <input
+                className="damara-line-input"
+                id="signup-email"
+                type="email"
+                autoComplete="email"
+                aria-label="학교 이메일"
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  setError("");
+                }}
+                placeholder="학교 이메일"
+                style={inputStyle}
+              />
+            </div>
+
+            <div className="damara-line-field" style={lineField}>
+              <Lock width={15} height={15} {...iconProps} />
+              <input
+                className="damara-line-input"
+                id="signup-password"
+                type={showPassword ? "text" : "password"}
+                autoComplete="new-password"
+                aria-label="비밀번호"
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  setError("");
+                }}
+                placeholder="비밀번호"
+                style={inputStyle}
+              />
+              <button
+                type="button"
+                className="damara-password-eye"
+                onClick={() => setShowPassword((v) => !v)}
+                aria-label={showPassword ? "비밀번호 숨기기" : "비밀번호 보기"}
+                style={{
+                  width: 32,
+                  height: 32,
+                  border: 0,
+                  borderRadius: 10,
+                  background: "transparent",
+                  color: "#8CB9F7",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  cursor: "pointer",
+                }}
+              >
+                {showPassword ? (
+                  <EyeOff width={17} height={17} strokeWidth={2} aria-hidden />
+                ) : (
+                  <Eye width={17} height={17} strokeWidth={2} aria-hidden />
+                )}
+              </button>
+            </div>
+
+            <div className="damara-line-field" style={lineField}>
+              <Lock width={15} height={15} {...iconProps} />
+              <input
+                className="damara-line-input"
+                id="signup-password-confirm"
+                type={showConfirm ? "text" : "password"}
+                autoComplete="new-password"
+                aria-label="비밀번호 확인"
+                value={confirmPassword}
+                onChange={(e) => {
+                  setConfirmPassword(e.target.value);
+                  setError("");
+                }}
+                placeholder="비밀번호 확인"
+                style={inputStyle}
+              />
+              <button
+                type="button"
+                className="damara-password-eye"
+                onClick={() => setShowConfirm((v) => !v)}
+                aria-label={showConfirm ? "비밀번호 확인 숨기기" : "비밀번호 확인 보기"}
+                style={{
+                  width: 32,
+                  height: 32,
+                  border: 0,
+                  borderRadius: 10,
+                  background: "transparent",
+                  color: "#8CB9F7",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  cursor: "pointer",
+                }}
+              >
+                {showConfirm ? (
+                  <EyeOff width={17} height={17} strokeWidth={2} aria-hidden />
+                ) : (
+                  <Eye width={17} height={17} strokeWidth={2} aria-hidden />
+                )}
+              </button>
+            </div>
+
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="damara-signup-submit"
+              style={{ ...submitButton, marginTop: 2 }}
+            >
+              {isLoading ? "처리 중…" : "회원가입"}
+            </button>
+          </form>
+
+          <div
+            style={{
+              marginTop: 14,
+              textAlign: "center",
+              color: grey700,
+              fontSize: 14,
+              fontWeight: 500,
             }}
           >
-            {isLoading ? "처리 중…" : "회원가입"}
-          </button>
-        </form>
+            또는
+          </div>
 
-        <div
-          style={{
-            position: "absolute",
-            left: 0,
-            top: 703,
-            width: "100%",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: 4,
-            textAlign: "center",
-          }}
-        >
-          <span style={{ color: FIGMA.muted, fontSize: 14, lineHeight: "21px" }}>이미 계정이 있나요?</span>
           <button
             type="button"
+            className="damara-soft-link"
             onClick={() => nav("/login")}
             style={{
+              alignSelf: "center",
+              marginTop: 12,
               border: 0,
               background: "transparent",
-              padding: 0,
-              color: FIGMA.link,
-              fontSize: 14,
+              color: blue500,
+              fontSize: 15,
               fontWeight: 700,
-              lineHeight: "21px",
+              textDecoration: "underline",
+              textUnderlineOffset: 3,
               cursor: "pointer",
             }}
           >
             로그인하기
           </button>
+
+          <p
+            className="damara-signup-copy"
+            style={{
+              margin: "auto 0 0",
+              color: grey400,
+              textAlign: "center",
+              fontSize: 11,
+              lineHeight: 1.5,
+            }}
+          >
+            명지대 학번과 이메일로 안전하게 인증해요.
+          </p>
         </div>
-      </div>
+      </main>
     </div>
   );
 }
